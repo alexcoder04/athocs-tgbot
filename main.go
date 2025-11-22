@@ -33,7 +33,7 @@ func main() {
 		bh.Handle(func(ctx *th.Context, update telego.Update) error {
 			_, _ = ctx.Bot().SendMessage(ctx, tu.Message(
 				tu.ID(update.Message.Chat.ID),
-				fmt.Sprintf("Hello %s!", update.Message.From.FirstName),
+				"I'm up and running!\nWill let you know if any of the stations' batteries are empty.",
 			))
 			return nil
 		}, th.CommandEqual("start"))
