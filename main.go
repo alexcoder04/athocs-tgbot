@@ -1,27 +1,53 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
 	"github.com/mymmrac/telego"
+	th "github.com/mymmrac/telego/telegohandler"
 	tu "github.com/mymmrac/telego/telegoutil"
 )
 
 func main() {
+	// create bot
+	ctx := context.Background()
 	bot, err := telego.NewBot(Config.Token, telego.WithDefaultLogger(false, true))
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 
-	bot.SendMessage(tu.Message(Config.GroupID, "Bot powered up"))
+	// start loop
+	go monitorBatteryLoop(bot, ctx)
 
-	updates, _ := bot.UpdatesViaLongPolling(&telego.GetUpdatesParams{})
+	// check for telegram updates
+	updates, _ := bot.UpdatesViaLongPolling(ctx, nil)
+	bh, _ := th.NewBotHandler(bot, updates)
+	defer func() { _ = bh.Stop() }()
 
-	for update := range updates {
-		if update.Message != nil {
-			fmt.Printf("Got message '%s' from %s in chat '%s'\n", update.Message.Text, update.Message.From.Username, update.Message.Chat.Title)
-		}
+	// commands
+	{
+		// /start
+		bh.Handle(func(ctx *th.Context, update telego.Update) error {
+			_, _ = ctx.Bot().SendMessage(ctx, tu.Message(
+				tu.ID(update.Message.Chat.ID),
+				fmt.Sprintf("Hello %s!", update.Message.From.FirstName),
+			))
+			return nil
+		}, th.CommandEqual("start"))
+
+		// other
+		bh.Handle(func(ctx *th.Context, update telego.Update) error {
+			_, _ = ctx.Bot().SendMessage(ctx, tu.Message(
+				tu.ID(update.Message.Chat.ID),
+				"Unknown command, use /start",
+			))
+			return nil
+		}, th.AnyCommand())
+
 	}
+
+	_ = bh.Start()
 }

@@ -4,14 +4,18 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/mymmrac/telego"
 	tu "github.com/mymmrac/telego/telegoutil"
 )
 
 type AthocsTgbotConfig struct {
-	Token   string
-	GroupID telego.ChatID
+	ApiUrl             string
+	BatteryAlarmThresh int
+	GroupID            telego.ChatID
+	RefreshInterval    time.Duration
+	Token              string
 }
 
 var Config = GetConfig()
@@ -24,7 +28,10 @@ func GetConfig() AthocsTgbotConfig {
 	}
 
 	return AthocsTgbotConfig{
-		Token:   os.Getenv("ATHOCS_TGBOT_TOKEN"),
-		GroupID: tu.ID(id),
+		ApiUrl:             os.Getenv("ATHOCS_TGBOT_APIURL"),
+		BatteryAlarmThresh: 40,
+		GroupID:            tu.ID(id),
+		RefreshInterval:    30 * time.Minute,
+		Token:              os.Getenv("ATHOCS_TGBOT_TOKEN"),
 	}
 }
