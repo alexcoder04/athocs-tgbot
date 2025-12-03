@@ -33,7 +33,7 @@ func GetConfig() AthocsTgbotConfig {
 		BatteryAlarmThresh: 40,
 		GroupID:            tu.ID(id),
 		RefreshInterval:    30 * time.Minute,
-		ReportInterval:     4 * time.Hour,
+		ReportInterval:     24 * time.Hour,
 		Token:              os.Getenv("ATHOCS_TGBOT_TOKEN"),
 	}
 }
