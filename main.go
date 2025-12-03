@@ -19,8 +19,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	// start loop
+	// start loops
 	go monitorBatteryLoop(bot, ctx)
+	go reportLoop(bot, ctx)
 
 	// check for telegram updates
 	updates, _ := bot.UpdatesViaLongPolling(ctx, nil)

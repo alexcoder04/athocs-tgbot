@@ -15,6 +15,7 @@ type AthocsTgbotConfig struct {
 	BatteryAlarmThresh int
 	GroupID            telego.ChatID
 	RefreshInterval    time.Duration
+	ReportInterval     time.Duration
 	Token              string
 }
 
@@ -32,6 +33,7 @@ func GetConfig() AthocsTgbotConfig {
 		BatteryAlarmThresh: 40,
 		GroupID:            tu.ID(id),
 		RefreshInterval:    30 * time.Minute,
+		ReportInterval:     4 * time.Hour,
 		Token:              os.Getenv("ATHOCS_TGBOT_TOKEN"),
 	}
 }
